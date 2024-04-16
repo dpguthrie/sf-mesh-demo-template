@@ -1,0 +1,6 @@
+projects:
+  - name: upstream
+
+packages:
+  - package: dbt-labs/codegen
+    version: ["<1.0.0"]

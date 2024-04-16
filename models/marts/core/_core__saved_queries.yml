@@ -1,0 +1,71 @@
+saved_queries:
+  - name: sales_metrics
+    description: CY Sales metrics used for our U.S.-based sales reps
+    query_params:
+      metrics:
+        - total_revenue
+        - total_expense
+        - total_profit
+      group_by:
+        - TimeDimension('metric_time', 'day')
+        - Dimension('customer_order__clerk_on_order')
+        - Dimension('customer__region')
+        - Dimension('customer__nation')
+        - Dimension('customer__customer_market_segment')
+        - Dimension('customer__customer_balance_segment')
+      where:
+        - "{{ Dimension('customer__nation') }} = 'UNITED STATES'"
+        - "{{ TimeDimension('metric_time', 'day') }} >= date_trunc(year, current_date)"
+
+  - name: all_monthly_active_users
+    description: |
+      Monthly active users seen in our application.  Active users are described as anyone who has both logged in
+      and successfully completed an event as defined by our PM team.
+    query_params: &user-params
+      metrics:
+        - monthly_customers
+      group_by:
+        - TimeDimension('metric_time', 'day')
+        - Dimension('customer__region')
+        - Dimension('customer__nation')
+        - Dimension('customer__customer_market_segment')
+  
+  - name: all_weekly_active_users
+    description: |
+      Weekly active users seen in our application.  Active users are described as anyone who has both logged in
+      and successfully completed an event as defined by our PM team.
+    query_params:
+      <<: *user-params
+      metrics:
+        - weekly_customers
+
+  - name: us_monthly_active_users
+    description: |
+      Monthly active users seen in our application based out of the US.  Active users are described as anyone who has both logged in
+      and successfully completed an event as defined by our PM team.
+    query_params:
+      <<: *user-params
+      where:
+        - "{{ Dimension('customer__nation') }} = 'UNITED STATES'"
+
+  - name: us_weekly_active_users
+    description: |
+      Weekly active users seen in our application based out of the US.  Active users are described as anyone who has both logged in
+      and successfully completed an event as defined by our PM team.
+    query_params:
+      <<: *user-params
+      metrics:
+        - weekly_customers
+      where:
+        - "{{ Dimension('customer__nation') }} = 'UNITED STATES'"
+
+  - name: sales_metrics_aggregated
+    description: CY Sales metrics used for our U.S.-based sales reps (aggregated)
+    query_params:
+      metrics:
+        - total_revenue
+        - total_expense
+        - total_profit
+      where:
+        - "{{ Dimension('customer__nation') }} = 'UNITED STATES'"
+        - "{{ TimeDimension('metric_time', 'day') }} >= date_trunc(year, current_date)"
