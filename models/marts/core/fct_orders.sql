@@ -11,11 +11,13 @@ with orders as (
     select * from {{ ref('stg_tpch_orders') }}
 
 ),
-order_item as (
+
+line_items as (
     
-    select * from {{ ref('order_items') }}
+    select * from {{ ref('stg_tpch_line_items') }}
 
 ),
+
 order_item_summary as (
 
     select 
@@ -24,7 +26,7 @@ order_item_summary as (
         sum(item_discount_amount) as item_discount_amount,
         sum(item_tax_amount) as item_tax_amount,
         sum(net_item_sales_amount) as net_item_sales_amount
-    from order_item
+    from line_items
     group by
         1
 ),
