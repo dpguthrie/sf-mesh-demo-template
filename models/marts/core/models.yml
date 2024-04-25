@@ -1,0 +1,64 @@
+models:
+  - name: fct_orders
+    description: ""
+    access: public
+    config:
+      contract:
+        enforced: true
+      grants:
+        select: ['pii_allowed', 'transformer']  # TODO:  Update this
+    columns:
+      - name: order_key
+        data_type: int
+        description: ""
+
+      - name: order_date
+        data_type: date
+        description: ""
+
+      - name: customer_key
+        data_type: int
+        description: ""
+
+      - name: status_code
+        data_type: varchar
+        description: ""
+
+      - name: priority_code
+        data_type: varchar
+        description: ""
+
+      - name: ship_priority
+        data_type: int
+        description: ""
+
+      - name: clerk_name
+        data_type: varchar
+        description: ""
+
+      - name: name
+        data_type: varchar
+        description: ""
+        constraints:
+          - type: custom
+            expression: "tag (snowflake_sample_data.tpch_sf1.pii_data = 'name')"
+
+      - name: market_segment
+        data_type: varchar
+        description: ""
+
+      - name: gross_item_sales_amount
+        data_type: numeric(38, 3)
+        description: ""
+
+      - name: item_discount_amount
+        data_type: numeric(38, 3)
+        description: ""
+
+      - name: item_tax_amount
+        data_type: numeric(38, 3)
+        description: ""
+
+      - name: net_item_sales_amount
+        data_type: numeric(38, 3)
+        description: ""

@@ -1,0 +1,16 @@
+sources:
+  - name: tpch
+    description: TPCH data source from Snowflake Sample Data
+    database: snowflake_sample_data
+    schema: tpch_sf1
+    tables:
+      - name: orders
+        description: main order tracking table
+      - name: customer
+        description: main customer table
+      - name: lineitem
+        description: main lineitem table
+      - name: nation
+        description: nation mapping
+      - name: region
+        description: region mapping

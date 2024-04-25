@@ -1,21 +1,25 @@
 {{
     config(
         materialized = 'table',
-        tags=['finance']
+        post_hook = "alter table {{ this }} modify column name set tag snowflake_sample_data.tpch_sf1.pii_data = 'name'"
     )
 }}
 
-
 with orders as (
     
-    select * from {{ ref('stg_tpch_orders') }}
+    select * from {{ ref('stg_orders') }}
 
 ),
 
 line_items as (
     
-    select * from {{ ref('stg_tpch_line_items') }}
+    select * from {{ ref('stg_line_items') }}
 
+),
+
+customers as (
+
+    select * from {{ ref('stg_customers') }}
 ),
 
 order_item_summary as (
@@ -27,13 +31,13 @@ order_item_summary as (
         sum(item_tax_amount) as item_tax_amount,
         sum(net_item_sales_amount) as net_item_sales_amount
     from line_items
-    group by
-        1
+    group by 1
+
 ),
+
 final as (
 
     select 
-
         orders.order_key, 
         orders.order_date,
         orders.customer_key,
@@ -41,20 +45,19 @@ final as (
         orders.priority_code,
         orders.ship_priority,
         orders.clerk_name,
-        1 as order_count,
+        customers.name,
+        customers.market_segment,
         order_item_summary.gross_item_sales_amount,
         order_item_summary.item_discount_amount,
         order_item_summary.item_tax_amount,
         order_item_summary.net_item_sales_amount
-    from
-        orders
-        inner join order_item_summary
-            on orders.order_key = order_item_summary.order_key
+    from orders
+    inner join order_item_summary
+        on orders.order_key = order_item_summary.order_key
+    inner join customers
+        on orders.customer_key = customers.customer_key
 )
-select 
-    *
-from
-    final
 
-order by
-    order_date
+select *
+from final
+order by order_date
